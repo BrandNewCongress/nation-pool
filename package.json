@@ -1,0 +1,30 @@
+{
+  "name": "nation-pool",
+  "version": "1.0.0",
+  "description": "Client and worker for a Redis kue backed NationBuilder auto rate-limiting request pool",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BrandNewCongress/nation-pool.git"
+  },
+  "keywords": [
+    "nationbuilder",
+    "redis",
+    "request",
+    "pool",
+    "kue"
+  ],
+  "author": "ben-pr-p",
+  "license": "AGPL-3.0",
+  "bugs": {
+    "url": "https://github.com/BrandNewCongress/nation-pool/issues"
+  },
+  "homepage": "https://github.com/BrandNewCongress/nation-pool#readme",
+  "dependencies": {
+    "kue": "^0.11.5",
+    "superagent": "^3.5.2"
+  }
+}
