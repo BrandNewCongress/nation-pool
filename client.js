@@ -1,23 +1,44 @@
+const execute = require('./execute')
 const kue = require('kue')
-const queue = kue.createQueue({
+const queue = process.env.REDIS_URL && kue.createQueue({
   redis: process.env.REDIS_URL
 })
 
 const e = {}
 
-const core = ({ method, query, body, priority, endpoint }) => new Promise((resolve, reject) => {
-  const job = queue.createJob('request', { method, query, body, endpoint }).removeOnComplete(true)
+let core
 
-  if (priority) {
-    job.priority(priority)
+if (!queue) {
+  const SLUG = process.env.NATION_SLUG
+
+  if (!SLUG) {
+    console.log('Must have NATION_SLUG set')
+    process.exit()
   }
 
-  job.attempts(5).on('complete', resolve).on('failed', reject)
+  const KEY = process.env.NATION_KEY_1
 
-  job.save(err => {
-    if (err) reject(err)
+  if (!KEY.length == 0) {
+    console.log('Must have at least 1 NATION_KEY set')
+    process.exit()
+  }
+
+  core = execute(SLUG, KEY, { endpoint, method, body, query })
+} else {
+  core = ({ method, query, body, priority, endpoint }) => new Promise((resolve, reject) => {
+    const job = queue.createJob('request', { method, query, body, endpoint }).removeOnComplete(true)
+
+    if (priority) {
+      job.priority(priority)
+    }
+
+    job.attempts(5).on('complete', resolve).on('failed', reject)
+
+    job.save(err => {
+      if (err) reject(err)
+    })
   })
-})
+}
 
 e.get = (endpoint, params) =>
   core(Object.assign({ method: 'GET', endpoint }, params))

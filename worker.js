@@ -54,37 +54,21 @@ const start = () => {
 
 
   queue.process('request', API_KEYS.length / 2, (job, done) => {
-    const { method, query, body } = job.data
-
-    const endpoint = job.data.endpoint.includes('/api/v1')
-      ? `https://${SLUG}.nationbuilder.com/${job.data.endpoint}`
-      : `https://${SLUG}.nationbuilder.com/api/v1/${job.data.endpoint}`
-
+    // Fetch next api key to use
     nextKey()
     .then(({key, idx}) => {
-      const params = Object.assign({access_token: key}, query)
-
-      let req = request(method, endpoint)
-        .set('Accept', 'application/json')
-        .query(params)
-
-      if (body) {
-        req = req.send(body)
-      }
-
-      req.end((err, res) => {
-        if (err) {
-          console.log('hi')
-          done(new Error(JSON.stringify(err)))
-        }
-
-        if (!res) {
-          const goodAt = req.res.headers['x-ratelimit-reset']
-          API_KEYS[idx].delay = (goodAt - new Date().getTime()/1000|0) * 1000
+      // Execute request with that key
+      execute(SLUG, key, job.data)
+      .then(body => done(null, body))
+      .catch(err => {
+        // Modify API_KEYS delay
+        if (err.rateLimitReset) {
+          API_KEYS[idx].delay = (err.rateLimitReset - new Date().getTime()/1000|0) * 1000
           return done('Rate Limit')
         }
 
-        done(null, res.body)
+        // Respond with unknown error
+        return done(err)
       })
     })
     .catch(console.error)
@@ -92,3 +76,7 @@ const start = () => {
 }
 
 module.exports = { start }
+
+if (require.main == module) {
+  start()
+}
