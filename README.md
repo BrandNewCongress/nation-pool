@@ -42,5 +42,12 @@ Note that the Promise may resolve in a longer time than it typically
 takes to make a Nationbuilder request because the worker is scheduling
 your request to avoid rate limit problems!
 
+### Standalone
 
+Running
+```javascript
+client.forceStandalone()
+```
 
+will run the client without relying on a worker even if a redis connection
+is present.

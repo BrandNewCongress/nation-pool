@@ -1,2 +1,2 @@
 redis: redis-server
-worker: node worker.js
+test: mocha test/

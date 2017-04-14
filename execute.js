@@ -1,11 +1,11 @@
 const request = require('superagent')
 
-module.exports = (slug, key, { endpoint, method, body, query }) => {
+module.exports = (slug, key, { endpoint, method, body, query }) => new Promise((resolve, reject) => {
   const fullUrl = endpoint.includes('/api/v1')
-    ? `https://${SLUG}.nationbuilder.com/${job.data.endpoint}`
+    ? `https://${slug}.nationbuilder.com/${endpoint}`
     : endpoint.includes('admin')
-      ? `https://${SLUG}.nationbuilder.com/${job.data.endpoint}`
-      : `https://${SLUG}.nationbuilder.com/api/v1/${job.data.endpoint}`
+      ? `https://${slug}.nationbuilder.com/${endpoint}`
+      : `https://${slug}.nationbuilder.com/api/v1/${endpoint}`
 
   const params = Object.assign({access_token: key}, query)
 
@@ -26,4 +26,4 @@ module.exports = (slug, key, { endpoint, method, body, query }) => {
 
     return resolve(res.body)
   })
-}
+})

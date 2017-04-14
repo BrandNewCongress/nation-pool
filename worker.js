@@ -1,4 +1,4 @@
-const request = require('superagent')
+const execute = require('./execute')
 const kue = require('kue')
 const queue = kue.createQueue({
   redis: process.env.REDIS_URL
@@ -75,7 +75,13 @@ const start = () => {
   })
 }
 
-module.exports = { start }
+const stop = () => {
+  queue.shutdown(100, err => {
+    console.log(`Shutdown ${err && `with ${err}`}`)
+  })
+}
+
+module.exports = { start, stop }
 
 if (require.main == module) {
   start()

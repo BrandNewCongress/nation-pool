@@ -8,7 +8,7 @@ const e = {}
 
 let core
 
-if (!queue) {
+const forceStandalone = () => {
   const SLUG = process.env.NATION_SLUG
 
   if (!SLUG) {
@@ -18,13 +18,15 @@ if (!queue) {
 
   const KEY = process.env.NATION_KEY_1
 
-  if (!KEY.length == 0) {
+  if (!KEY) {
     console.log('Must have at least 1 NATION_KEY set')
     process.exit()
   }
 
-  core = execute(SLUG, KEY, { endpoint, method, body, query })
-} else {
+  core = (params) => execute(SLUG, KEY, params)
+}
+
+const attemptWorker = () => {
   core = ({ method, query, body, priority, endpoint }) => new Promise((resolve, reject) => {
     const job = queue.createJob('request', { method, query, body, endpoint }).removeOnComplete(true)
 
@@ -40,6 +42,12 @@ if (!queue) {
   })
 }
 
+if (!queue) {
+  forceStandalone()
+} else {
+  attemptWorker()
+}
+
 e.get = (endpoint, params) =>
   core(Object.assign({ method: 'GET', endpoint }, params))
 
@@ -48,5 +56,8 @@ e.put = (endpoint, params) =>
 
 e.post = (endpoint, params) =>
   core(Object.assign({ method: 'POST', endpoint }, params))
+
+e.forceStandalone = forceStandalone
+e.attemptWorker = attemptWorker
 
 module.exports = e
