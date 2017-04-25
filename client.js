@@ -16,7 +16,7 @@ const forceStandalone = () => {
     process.exit()
   }
 
-  const KEY = process.env.NATION_KEY_1
+  const KEY = process.env.NATION_KEY_1 || process.env.NATIONBUILDER_TOKEN
 
   if (!KEY) {
     console.log('Must have at least 1 NATION_KEY set')
