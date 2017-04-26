@@ -9,7 +9,7 @@ const e = {}
 let core
 
 const forceStandalone = () => {
-  const SLUG = process.env.NATION_SLUG
+  const SLUG = process.env.NATION_SLUG || process.env.NATIONBUILDER_SLUG
 
   if (!SLUG) {
     console.log('Must have NATION_SLUG set')
