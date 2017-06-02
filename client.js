@@ -57,6 +57,9 @@ e.put = (endpoint, params) =>
 e.post = (endpoint, params) =>
   core(Object.assign({ method: 'POST', endpoint }, params))
 
+e.delete = (endpoint, params) =>
+  core(Object.assign({ method: 'DELETE', endpoint }, params))
+
 e.forceStandalone = forceStandalone
 e.attemptWorker = attemptWorker
 
