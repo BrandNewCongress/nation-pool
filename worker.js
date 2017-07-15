@@ -1,6 +1,6 @@
 const execute = require('./execute')
 const kue = require('kue')
-const queue = kue.createQueue({
+const queue = process.env.REDIS_URL && kue.createQueue({
   redis: process.env.REDIS_URL
 })
 
